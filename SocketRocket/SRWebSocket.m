@@ -209,6 +209,16 @@ NSString *const SRHTTPResponseErrorKey = @"HTTPResponseStatusCode";
     return [self initWithURLRequest:request protocols:protocols securityPolicy:securityPolicy];
 }
 
+- (instancetype)initWithURLRequest:(NSURLRequest *)request securityPolicy:(SRSecurityPolicy *)securityPolicy
+{
+    return [self initWithURLRequest:request protocols:nil securityPolicy:securityPolicy];
+}
+
+- (instancetype)initWithURLRequest:(NSURLRequest *)request protocols:(NSArray<NSString *> *)protocols
+{
+    return [self initWithURLRequest:request protocols:protocols allowsUntrustedSSLCertificates:NO];
+}
+
 - (instancetype)initWithURLRequest:(NSURLRequest *)request
 {
     return [self initWithURLRequest:request protocols:nil];
@@ -221,10 +231,7 @@ NSString *const SRHTTPResponseErrorKey = @"HTTPResponseStatusCode";
 
 - (instancetype)initWithURL:(NSURL *)url protocols:(NSArray<NSString *> *)protocols
 {
-#pragma clang diagnostic push
-#pragma clang diagnostic ignored "-Wdeprecated"
     return [self initWithURL:url protocols:protocols allowsUntrustedSSLCertificates:NO];
-#pragma clang diagnostic pop
 }
 
 - (instancetype)initWithURL:(NSURL *)url securityPolicy:(SRSecurityPolicy *)securityPolicy

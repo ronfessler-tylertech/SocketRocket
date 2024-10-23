@@ -197,9 +197,7 @@ extern NSString *const SRHTTPResponseErrorKey;
  @param protocols                      An array of strings that turn into `Sec-WebSocket-Protocol`. Default: `nil`.
  @param allowsUntrustedSSLCertificates Boolean value indicating whether untrusted SSL certificates are allowed. Default: `false`.
  */
-- (instancetype)initWithURL:(NSURL *)url protocols:(nullable NSArray<NSString *> *)protocols allowsUntrustedSSLCertificates:(BOOL)allowsUntrustedSSLCertificates
-    DEPRECATED_MSG_ATTRIBUTE("Disabling certificate chain validation is unsafe. "
-                             "Please use a proper Certificate Authority to issue your TLS certificates.");
+- (instancetype)initWithURL:(NSURL *)url protocols:(nullable NSArray<NSString *> *)protocols allowsUntrustedSSLCertificates:(BOOL)allowsUntrustedSSLCertificates;
 
 /**
  Unavailable initializer. Please use any other initializer.
