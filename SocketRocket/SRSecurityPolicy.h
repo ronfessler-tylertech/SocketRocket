@@ -31,9 +31,7 @@ NS_ASSUME_NONNULL_BEGIN
 
  @param pinnedCertificates Array of `SecCertificateRef` SSL certificates to use for validation.
  */
-+ (instancetype)pinnningPolicyWithCertificates:(NSArray *)pinnedCertificates
-    DEPRECATED_MSG_ATTRIBUTE("Using pinned certificates is neither secure nor supported in SocketRocket, "
-                             "and leads to security issues. Please use a proper, trust chain validated certificate.");
++ (instancetype)pinnningPolicyWithCertificates:(NSArray *)pinnedCertificates;
 
 /**
  Specifies socket security and optional certificate chain validation.
@@ -42,10 +40,7 @@ NS_ASSUME_NONNULL_BEGIN
  are considering using this method because your certificate was not issued by a
  recognized certificate authority, consider using `pinningPolicyWithCertificates` instead.
  */
-- (instancetype)initWithCertificateChainValidationEnabled:(BOOL)enabled
-    DEPRECATED_MSG_ATTRIBUTE("Disabling certificate chain validation is unsafe. "
-                             "Please use a proper Certificate Authority to issue your TLS certificates.")
-    NS_DESIGNATED_INITIALIZER;
+- (instancetype)initWithCertificateChainValidationEnabled:(BOOL)enabled;
 
 /**
  Updates all the security options for input and output streams, for example you

@@ -12,6 +12,8 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
+static NSString *const SRSSLClientCertificatesKey = @"SocketRocket_SSLClientCertificate";
+
 @interface SRSecurityPolicy ()
 
 @property (nonatomic, assign, readonly) BOOL certificateChainValidationEnabled;
@@ -27,10 +29,6 @@ NS_ASSUME_NONNULL_BEGIN
 
 + (instancetype)pinnningPolicyWithCertificates:(NSArray *)pinnedCertificates
 {
-    [NSException raise:NSInvalidArgumentException
-                format:@"Using pinned certificates is neither secure nor supported in SocketRocket, "
-                        "and leads to security issues. Please use a proper, trust chain validated certificate."];
-
     return nil;
 }
 
@@ -46,12 +44,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 - (instancetype)init
 {
-#pragma clang diagnostic push
-#pragma clang diagnostic ignored "-Wdeprecated"
-
     return [self initWithCertificateChainValidationEnabled:YES];
-
-#pragma clang diagnostic pop
 }
 
 - (void)updateSecurityOptionsInStream:(NSStream *)stream
