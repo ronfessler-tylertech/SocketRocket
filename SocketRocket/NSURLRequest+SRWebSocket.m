@@ -18,23 +18,53 @@ void import_NSURLRequest_SRWebSocket(void) { }
 NS_ASSUME_NONNULL_BEGIN
 
 static NSString *const SRSSLPinnnedCertificatesKey = @"SocketRocket_SSLPinnedCertificates";
+static NSString *const SRSSLClientCertificateKey = @"SocketRocket_SSLClientCertificate";
+static NSString *const SRSSLClientCertificatePasswordKey = @"SocketRocket_SSLClientCertificatePassword";
 
 @implementation NSURLRequest (SRWebSocket)
 
-- (nullable NSArray *)SR_SSLPinnedCertificates
-{
-    return nil;
+- (nullable NSArray *)SR_SSLPinnedCertificates {
+    return [NSURLProtocol propertyForKey:SRSSLPinnnedCertificatesKey inRequest:self];
+}
+
+- (nullable NSData *)SR_SSLClientCertificate {
+    return [NSURLProtocol propertyForKey:SRSSLClientCertificateKey inRequest:self];
+}
+
+- (nullable NSString *)SR_SSLClientCertificatePassword {
+    return [NSURLProtocol propertyForKey:SRSSLClientCertificatePasswordKey inRequest:self];
 }
 
 @end
 
 @implementation NSMutableURLRequest (SRWebSocket)
 
-- (void)setSR_SSLPinnedCertificates:(nullable NSArray *)SR_SSLPinnedCertificates
-{
-    [NSException raise:NSInvalidArgumentException
-                format:@"Using pinned certificates is neither secure nor supported in SocketRocket, "
-                        "and leads to security issues. Please use a proper, trust chain validated certificate."];
+// MARK: - Pinned Cert
+- (nullable NSArray *)SR_SSLPinnedCertificates {
+    return [NSURLProtocol propertyForKey:SRSSLPinnnedCertificatesKey inRequest:self];
+}
+
+- (void)setSR_SSLPinnedCertificates:(nullable NSArray *)SR_SSLPinnedCertificates {
+    [NSURLProtocol setProperty:[SR_SSLPinnedCertificates copy] forKey:SRSSLPinnnedCertificatesKey inRequest:self];
+}
+
+// MARK: - Client Cert
+- (nullable NSData *)SR_SSLClientCertificate {
+    return [NSURLProtocol propertyForKey:SRSSLClientCertificateKey inRequest:self];
+}
+
+
+- (void)setSR_SSLClientCertificate:(nullable NSData *)SR_SSLClientCertificate {
+    [NSURLProtocol setProperty: [SR_SSLClientCertificate copy] forKey: SRSSLClientCertificateKey inRequest:self];
+}
+
+- (nullable NSString *)SR_SSLClientCertificatePassword {
+    return [NSURLProtocol propertyForKey: SRSSLClientCertificatePasswordKey inRequest:self];
+}
+
+
+- (void)setSR_SSLClientCertificatePassword:(nullable NSString *)SR_SSLClientCertificatePassword {
+    [NSURLProtocol setProperty:[SR_SSLClientCertificatePassword copy] forKey: SRSSLClientCertificatePasswordKey inRequest:self];
 }
 
 @end

@@ -188,29 +188,25 @@ NSString *const SRHTTPResponseErrorKey = @"HTTPResponseStatusCode";
     SRSecurityPolicy *securityPolicy;
     NSArray *pinnedCertificates = request.SR_SSLPinnedCertificates;
     if (pinnedCertificates) {
-#pragma clang diagnostic push
-#pragma clang diagnostic ignored "-Wdeprecated"
         securityPolicy = [SRSecurityPolicy pinnningPolicyWithCertificates:pinnedCertificates];
-#pragma clang diagnostic pop
     } else {
         BOOL certificateChainValidationEnabled = !allowsUntrustedSSLCertificates;
-    securityPolicy = [[SRSecurityPolicy alloc] initWithCertificateChainValidationEnabled:certificateChainValidationEnabled];
+        securityPolicy = [[SRSecurityPolicy alloc] initWithCertificateChainValidationEnabled:certificateChainValidationEnabled];
+    }
+
+    NSData *clientCertificate = request.SR_SSLClientCertificate;
+
+    if (clientCertificate) {
+        securityPolicy.SR_SSLClientCertificate = clientCertificate;
+    }
+    
+    NSString *clientCertificatePassword = request.SR_SSLClientCertificatePassword;
+    
+    if (clientCertificatePassword) {
+        securityPolicy.SR_SSLClientCertificatePassword = clientCertificatePassword;
     }
 
     return [self initWithURLRequest:request protocols:protocols securityPolicy:securityPolicy];
-}
-
-- (instancetype)initWithURLRequest:(NSURLRequest *)request securityPolicy:(SRSecurityPolicy *)securityPolicy
-{
-    return [self initWithURLRequest:request protocols:nil securityPolicy:securityPolicy];
-}
-
-- (instancetype)initWithURLRequest:(NSURLRequest *)request protocols:(NSArray<NSString *> *)protocols
-{
-#pragma clang diagnostic push
-#pragma clang diagnostic ignored "-Wdeprecated"
-    return [self initWithURLRequest:request protocols:protocols allowsUntrustedSSLCertificates:NO];
-#pragma clang diagnostic pop
 }
 
 - (instancetype)initWithURLRequest:(NSURLRequest *)request

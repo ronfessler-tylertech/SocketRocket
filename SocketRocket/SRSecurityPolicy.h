@@ -14,6 +14,9 @@ NS_ASSUME_NONNULL_BEGIN
 
 @interface SRSecurityPolicy : NSObject
 
+@property (nullable, nonatomic, copy) NSData *SR_SSLClientCertificate;
+@property (nullable, nonatomic, copy) NSString *SR_SSLClientCertificatePassword;
+
 /**
  A default `SRSecurityPolicy` implementation specifies socket security and
  validates the certificate chain.

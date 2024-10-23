@@ -62,6 +62,45 @@ NS_ASSUME_NONNULL_BEGIN
     // Validate certificate chain for this stream if enabled.
     NSDictionary<NSString *, id> *sslOptions = @{ (__bridge NSString *)kCFStreamSSLValidatesCertificateChain : @(self.certificateChainValidationEnabled) };
     [stream setProperty:sslOptions forKey:(__bridge NSString *)kCFStreamPropertySSLSettings];
+    
+    // Import client Certificate
+
+    NSData *clientCertificate = _SR_SSLClientCertificate;
+    NSString *password = _SR_SSLClientCertificatePassword;
+    
+    if (clientCertificate && password) {
+        // Import .p12 data
+        CFArrayRef keyref = NULL;
+        OSStatus sanityChesk = SecPKCS12Import(
+                                               (__bridge CFDataRef)clientCertificate,
+                                               (__bridge CFDictionaryRef)[NSDictionary dictionaryWithObject: password forKey:(__bridge id)kSecImportExportPassphrase],
+                                               &keyref
+                                               );
+        
+        if (sanityChesk != noErr) {
+            NSLog(@"Error while importing client certificate [%d]", (int)sanityChesk);
+            return;
+        } else {
+            NSLog(@"Success opening client certificate.");
+            // Identity
+            CFDictionaryRef identityDict = CFArrayGetValueAtIndex(keyref, 0);
+            SecIdentityRef identityRef = (SecIdentityRef)CFDictionaryGetValue(identityDict, kSecImportItemIdentity);
+
+            // Cert
+            SecCertificateRef cert = NULL;
+            OSStatus status = SecIdentityCopyCertificate(identityRef, &cert);
+            if (status)
+              NSLog(@"SecIdentityCopyCertificate failed.");
+
+            // the certificates array, containing the identity then the root certificate
+            NSArray *myCerts = [[NSArray alloc] initWithObjects:(__bridge id)identityRef, (__bridge id)cert, nil];
+
+            [sslOptions setValue:(NSString *)kCFStreamSocketSecurityLevelNegotiatedSSL forKey:(NSString*)kCFStreamSSLLevel];
+            [sslOptions setValue:(NSString *)kCFStreamSocketSecurityLevelNegotiatedSSL forKey:(NSString*)kCFStreamPropertySocketSecurityLevel];
+            [sslOptions setValue:myCerts forKey:(NSString *)kCFStreamSSLCertificates];
+            [sslOptions setValue:[NSNumber numberWithBool:NO] forKey:(NSString *)kCFStreamSSLIsServer];
+        }
+    }
 }
 
 - (BOOL)evaluateServerTrust:(SecTrustRef)serverTrust forDomain:(NSString *)domain
